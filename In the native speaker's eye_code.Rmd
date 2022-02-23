@@ -1,0 +1,460 @@
+---
+title: "In the native speaker's eye_code"
+output: 
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+  html_notebook: default
+---
+
+## Packages
+```{r}
+#install.packages('tidyverse')
+#install.packages('viridis')
+#install.packages('viridisLite')
+#install.packages('markdown')
+#install.packages('ggplot2')
+#install.packages('dplyr')
+#install.packages('lme4')
+#install.packages('lmerTest')
+#install.packages('tidyr')
+#install.packages('effects')
+#install.packages('Hmisc')
+#install.packages("broom.mixed")
+
+library(tidyverse)
+library(tidyr)
+library(viridis)
+library(viridisLite)
+library(markdown)
+library(ggplot2)
+library(dplyr)
+library(lme4)
+library(lmerTest)
+library(effects)
+library(broom.mixed)
+```
+## Data import
+```{r}
+#Eye = read.csv2("Eye.csv")
+```
+## Subsets
+```{r}
+df_s <- subset(Eye, IA_CAT == "S")
+df_v <- subset(Eye, IA_CAT == "V")
+df_a1 <- subset(Eye, IA_CAT == "A1")
+df_o <- subset(Eye, IA_CAT == "O")
+df_a2 <- subset(Eye, IA_CAT == "A2")
+# List of subsets during first-pass reading
+df_s_first <- subset(Eye, IA_CAT == "S" & IA_FIRST_FIX_PROGRESSIVE == "1")
+df_v_first <- subset(Eye, IA_CAT == "V" & IA_FIRST_FIX_PROGRESSIVE == "1")
+df_a1_first <- subset(Eye, IA_CAT == "A1" & IA_FIRST_FIX_PROGRESSIVE == "1")
+df_o_first <- subset(Eye, IA_CAT == "O" & IA_FIRST_FIX_PROGRESSIVE == "1")
+df_a2_first <- subset(Eye, IA_CAT == "A2" & IA_FIRST_FIX_PROGRESSIVE == "1")
+```
+## Contrast coding
+```{r}
+#Subjekt1
+df_s_first$LENGTH <- as.factor(df_s_first$LENGTH)
+df_s_first$GRAM <- as.factor(df_s_first$GRAM)
+class(df_s_first$LENGTH)
+class(df_s_first$GRAM)
+levels(df_s_first$LENGTH)
+levels(df_s_first$GRAM)
+contrasts(df_s_first$LENGTH) <- c(0.5,-0.5)
+contrasts(df_s_first$GRAM) <- c(-0.5,0.5)
+```
+
+```{r}
+#Subjekt2
+df_s$LENGTH <- as.factor(df_s$LENGTH)
+df_s$GRAM <- as.factor(df_s$GRAM)
+#class(df_s$LENGTH)
+#class(df_s$GRAM)
+#levels(df_s$LENGTH)
+#levels(df_s$GRAM)
+contrasts(df_s$LENGTH) <- c(0.5,-0.5)
+contrasts(df_s$GRAM) <- c(-0.5,0.5)
+```
+
+```{r}
+#V1
+df_v_first$LENGTH <- as.factor(df_v_first$LENGTH)
+df_v_first$GRAM <- as.factor(df_v_first$GRAM)
+contrasts(df_v_first$LENGTH) <- c(0.5,-0.5)
+contrasts(df_v_first$GRAM) <- c(-0.5,0.5)
+#V2
+df_v$LENGTH <- as.factor(df_v$LENGTH)
+df_v$GRAM <- as.factor(df_v$GRAM)
+contrasts(df_v$LENGTH) <- c(0.5,-0.5)
+contrasts(df_v$GRAM) <- c(-0.5,0.5)
+#O1
+df_o_first$LENGTH <- as.factor(df_o_first$LENGTH)
+df_o_first$GRAM <- as.factor(df_o_first$GRAM)
+contrasts(df_o_first$LENGTH) <- c(0.5,-0.5)
+contrasts(df_o_first$GRAM) <- c(-0.5,0.5)
+#O2
+df_o$LENGTH <- as.factor(df_o$LENGTH)
+df_o$GRAM <- as.factor(df_o$GRAM)
+contrasts(df_o$LENGTH) <- c(0.5,-0.5)
+contrasts(df_o$GRAM) <- c(-0.5,0.5)
+#A1.1
+df_a1_first$LENGTH <- as.factor(df_a1_first$LENGTH)
+df_a1_first$GRAM <- as.factor(df_a1_first$GRAM)
+contrasts(df_a1_first$LENGTH) <- c(0.5,-0.5)
+contrasts(df_a1_first$GRAM) <- c(-0.5,0.5)
+#A1.2
+df_a1$LENGTH <- as.factor(df_a1$LENGTH)
+df_a1$GRAM <- as.factor(df_a1$GRAM)
+contrasts(df_a1$LENGTH) <- c(0.5,-0.5)
+contrasts(df_a1$GRAM) <- c(-0.5,0.5)
+#A2.1
+df_a2_first$LENGTH <- as.factor(df_a2_first$LENGTH)
+df_a2_first$GRAM <- as.factor(df_a2_first$GRAM)
+contrasts(df_a2_first$LENGTH) <- c(0.5,-0.5)
+contrasts(df_a2_first$GRAM) <- c(-0.5,0.5)
+#A2.2
+df_a2$LENGTH <- as.factor(df_a2$LENGTH)
+df_a2$GRAM <- as.factor(df_a2$GRAM)
+contrasts(df_a2$LENGTH) <- c(0.5,-0.5)
+contrasts(df_a2$GRAM) <- c(-0.5,0.5)
+```
+## Check of class and level
+```{r}
+class(df_v_first$LENGTH)
+class(df_v_first$GRAM)
+levels(df_v_first$LENGTH)
+levels(df_v_first$GRAM)
+class(df_v$LENGTH)
+class(df_v$GRAM)
+levels(df_v$LENGTH)
+levels(df_v$GRAM)
+class(df_o_first$LENGTH)
+class(df_o_first$GRAM)
+levels(df_o_first$LENGTH)
+levels(df_o_first$GRAM)
+class(df_o$LENGTH)
+class(df_o$GRAM)
+levels(df_o$LENGTH)
+levels(df_o$GRAM)
+class(df_a1_first$LENGTH)
+class(df_a1_first$GRAM)
+levels(df_a1_first$LENGTH)
+levels(df_a1_first$GRAM)
+class(df_a1$LENGTH)
+class(df_a1$GRAM)
+levels(df_a1$LENGTH)
+levels(df_a1$GRAM)
+class(df_a2_first$LENGTH)
+class(df_a2_first$GRAM)
+levels(df_a2_first$LENGTH)
+levels(df_a2_first$GRAM)
+class(df_a2$LENGTH)
+class(df_a2$GRAM)
+levels(df_a2$LENGTH)
+levels(df_a2$GRAM)
+```
+## MODELS
+## SUBJEKT
+## First fixation duration (S)
+```{r}
+m.s.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_s_first, REML=F)
+summary(m.s.firstfix)
+```
+## Gaze duration (S)
+```{r}
+m.s.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_s_first, REML=F)
+summary(m.s.gaze)
+```
+## Regression path duration (S)
+```{r}
+m.s.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_s_first, REML=F)
+summary(m.s.reg.path)
+```
+## Total duration (S)
+Remember to change subset (first-pass reading)!
+```{r}
+m.s.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_s, REML=F)
+summary(m.s.total)
+```
+## Plots for article
+```{r}
+plot7 <- plot(effect('GRAM:TRIAL_INDEX_targets',m.s.reg.path))
+plot7
+```
+
+```{r}
+plot8 <- plot(effect('GRAM:TRIAL_INDEX_targets',m.s.total))
+plot8
+```
+## Regressions out (S) - rescaled trial_index
+```{r}
+s.reg.out <- glmer (IA_REGRESSION_OUT ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_s_first, family = binomial)
+summary(s.reg.out)
+```
+## Skipping percentage (S) - rescaled trial_index
+```{r}
+s.skip <- glmer (IA_SKIP ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_s, family = binomial)
+summary(s.skip)
+```
+## VERB
+## First fixation duration (V)
+```{r}
+m.v.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_v_first, REML=F)
+summary(m.v.firstfix)
+```
+## Gaze duration (v)
+```{r}
+m.v.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_v_first, REML=F)
+summary(m.v.gaze)
+```
+## Regression path duration (v)
+```{r}
+m.v.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_v_first, REML=F)
+summary(m.v.reg.path)
+```
+## Total duration (v)
+```{r}
+m.v.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_v, REML=F)
+summary(m.v.total)
+```
+## Plots for article
+```{r}
+plot9 <- plot(effect('GRAM:TRIAL_INDEX_targets',m.v.reg.path))
+plot9
+```
+
+```{r}
+plot10 <- plot(effect('GRAM:TRIAL_INDEX_targets',m.v.total))
+plot10
+```
+## Regressions out (v) - rescaled trial_index
+```{r}
+v.reg.out <- glmer (IA_REGRESSION_OUT ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_v_first, family = binomial)
+summary(v.reg.out)
+```
+## Skipping percentage (v) - rescaled trial_index
+```{r}
+v.skip <- glmer (IA_SKIP ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_v, family = binomial)
+summary(v.skip)
+```
+## ADVERB 1
+## First fixation duration (A1)
+```{r}
+m.a1.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a1_first, REML=F)
+summary(m.a1.firstfix)
+```
+## Gaze duration (a1)
+```{r}
+m.a1.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a1_first, REML=F)
+summary(m.a1.gaze)
+```
+## Regression path duration (a1)
+```{r}
+m.a1.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a1_first, REML=F)
+summary(m.a1.reg.path)
+```
+## Total duration (a1)
+```{r}
+m.a1.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a1, REML=F)
+summary(m.a1.total)
+```
+## Plot for article
+```{r}
+plot6 <- plot(effect('GRAM:TRIAL_INDEX_targets',m.a1.total))
+plot6
+```
+## Skipping percentage (a1) - rescaled trial_index
+Only converges without GRAM*TRIAL + optimizer
+```{r}
+a1.skip <- glmer (IA_SKIP ~ GRAM * LENGTH + TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_a1, family = binomial, control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+summary(a1.skip)
+```
+## OBJEKT
+## First fixation duration (o)
+```{r}
+m.o.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_o_first, REML=F)
+summary(m.o.firstfix)
+```
+## Gaze duration (o)
+```{r}
+m.o.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_o_first, REML=F)
+summary(m.o.gaze)
+```
+## Regression path duration (o)
+```{r}
+m.o.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_o_first, REML=F)
+summary(m.o.reg.path)
+```
+## Plot for regression path duration (o)
+```{r}
+plot4 <- plot(effect('GRAM:LENGTH', m.o.reg.path))
+plot4
+```
+## Total duration (o)
+```{r}
+m.o.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_o, REML=F)
+summary(m.o.total)
+```
+## Regressions out (o) - rescaled trial_index
+```{r}
+o.reg.out <- glmer (IA_REGRESSION_OUT ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_o_first, family = binomial)
+summary(o.reg.out)
+```
+## Skipping percentage (o) - rescaled trial_index
+```{r}
+o.skip <- glmer (IA_SKIP ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_o, family = binomial)
+summary(o.skip)
+```
+## ADVERB 2
+## First fixation duration (A2)
+```{r}
+m.a2.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a2_first, REML=F)
+summary(m.a2.firstfix)
+```
+## Gaze duration (a2)
+```{r}
+m.a2.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a2_first, REML=F)
+summary(m.a2.gaze)
+```
+## Regression path duration (a2)
+```{r}
+m.a2.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a2_first, REML=F)
+summary(m.a2.reg.path)
+```
+## Total duration (a2)
+```{r}
+m.a2.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_a2, REML=F)
+summary(m.a2.total)
+```
+## Regressions out (a2) - rescaled trial_index
+```{r}
+a2.reg.out <- glmer (IA_REGRESSION_OUT ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_a2_first, family = binomial)
+summary(a2.reg.out)
+```
+## Skipping percentage (a2) - rescaled trial_index
+Does not converge with interactions
+```{r}
+#b.df_a2$LENGTH = relevel(as.factor(b.df_a2$LENGTH), ref = "short")
+a2.skip <- glmer (IA_SKIP ~ GRAM + LENGTH + TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=df_a2, family = binomial)
+summary(a2.skip)
+```
+## MODEL TOTAL READING TIME FOR THE WHOLE SENTENCE
+```{r}
+m.total <- lmer (DWELL_TIME_SENTENCE ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=df_s, REML=F)
+summary(m.total)
+```
+## Individual variation (plot for article)
+```{r}
+plot3 <- augment(m.total) %>%
+    ggplot(aes(GRAM,color = LENGTH, group = PARTICIPANT)) + facet_wrap(~LENGTH)+
+    geom_jitter(aes(y = DWELL_TIME_SENTENCE), alpha = 0.5, height = 0, width = .1) +
+    stat_summary(fun = mean, aes(y = .fitted), geom = "line", alpha = .5) + theme_classic()
+plot3
+```
+## Looking at the individuals (plot for article)
+```{r}
+plot11 <- augment(m.total) %>%
+    ggplot(aes(GRAM,color = LENGTH, group = LENGTH)) + facet_wrap(~PARTICIPANT)+
+    geom_jitter(aes(y = DWELL_TIME_SENTENCE), alpha = 0.5, height = 1, width = .1) +
+    geom_line(aes(y = .fitted)) + theme_classic()
+plot11
+```
+## Plots for article
+```{r}
+plot1 <- plot(effect('GRAM:LENGTH', m.total))
+plot1
+```
+
+```{r}
+plot2 <- plot(effect('GRAM:TRIAL_INDEX_targets', m.total))
+plot2
+```
+## ANALYSIS OF COLLAPSED REGIONS (S+V)
+Collapsing the two regions
+```{r}
+subj_verb = subset(Eye, IA_ID == 2 | IA_ID == 3)
+subj_verb = subj_verb %>%
+  drop_na()  %>% 
+  group_by(PARTICIPANT, TRIAL_INDEX_targets, TRIAL_INDEX_RESCALED, identifier, condition, GRAM, LENGTH, sentence) %>%
+
+  summarize(IA_FIRST_FIX_PROGRESSIVE = max(as.numeric(IA_FIRST_FIX_PROGRESSIVE)),
+            IA_FIRST_FIXATION_DURATION = sum(as.numeric(IA_FIRST_FIXATION_DURATION)),
+            IA_FIRST_RUN_DWELL_TIME = sum(as.numeric(IA_FIRST_RUN_DWELL_TIME)),
+            IA_REGRESSION_PATH_DURATION = sum(as.numeric(IA_REGRESSION_PATH_DURATION)),
+            IA_DWELL_TIME = sum(as.numeric(IA_DWELL_TIME)),
+            IA_REGRESSION_OUT = max(as.numeric(IA_REGRESSION_OUT)),
+            IA_SKIP = max(as.numeric(IA_SKIP)),
+            DWELL_TIME_SENTENCE = as.numeric(DWELL_TIME_SENTENCE)) 
+subj_verb = subj_verb[!duplicated(subj_verb),]
+write.csv(subj_verb, "subj_verb.csv", row.names = FALSE)
+```
+## Subsets and contrast coding for collapsed region
+```{r}
+# Subset during first-pass reading
+subj_verb_first <- subset(subj_verb, IA_FIRST_FIX_PROGRESSIVE == "1")
+```
+
+```{r}
+subj_verb$LENGTH <- as.factor(subj_verb$LENGTH)
+subj_verb$GRAM <- as.factor(subj_verb$GRAM)
+class(subj_verb$LENGTH)
+class(subj_verb$GRAM)
+levels(subj_verb$LENGTH)
+levels(subj_verb$GRAM)
+contrasts(subj_verb$LENGTH) <- c(0.5,-0.5)
+contrasts(subj_verb$GRAM) <- c(-0.5,0.5)
+
+subj_verb_first$LENGTH <- as.factor(subj_verb_first$LENGTH)
+subj_verb_first$GRAM <- as.factor(subj_verb_first$GRAM)
+class(subj_verb_first$LENGTH)
+class(subj_verb_first$GRAM)
+levels(subj_verb_first$LENGTH)
+levels(subj_verb_first$GRAM)
+contrasts(subj_verb_first$LENGTH) <- c(0.5,-0.5)
+contrasts(subj_verb_first$GRAM) <- c(-0.5,0.5)
+```
+## First fixation duration (S+V)
+```{r}
+kol.firstfix <- lmer (IA_FIRST_FIXATION_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=subj_verb_first, REML=F)
+summary(kol.firstfix)
+```
+## Gaze duration (S+V)
+```{r}
+kol.gaze <- lmer (IA_FIRST_RUN_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=subj_verb_first, REML=F)
+summary(kol.gaze)
+```
+## Regression path duration (S+V)
+```{r}
+kol.reg.path <- lmer (IA_REGRESSION_PATH_DURATION ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=subj_verb_first, REML=F)
+summary(kol.reg.path)
+```
+## Total duration (S+V)
+```{r}
+kol.total <- lmer (IA_DWELL_TIME ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_targets + (1|identifier) + (1|PARTICIPANT), data=subj_verb, REML=F)
+summary(kol.total)
+```
+## Regressions out (S+V) - rescaled trial_index
+```{r}
+kol.reg.out <- glmer (IA_REGRESSION_OUT ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=subj_verb_first, family = binomial)
+summary(kol.reg.out)
+```
+## Skipping percentage (S+V) - rescaled trial_index
+```{r}
+kol.skip <- glmer (IA_SKIP ~ GRAM * LENGTH + GRAM * TRIAL_INDEX_RESCALED + (1|identifier) + (1|PARTICIPANT), data=subj_verb, family = binomial)
+summary(kol.skip)
+```
+## Plot for article - first fixation on the verb
+```{r}
+plot5 <- ggplot(df_v_first,aes(y=IA_FIRST_FIXATION_DURATION,x=TRIAL_INDEX_targets, color=GRAM)) +
+  geom_point(aes(shape=GRAM))+
+  geom_smooth(method='lm')+
+  scale_color_manual(values = c("#4E84C4", "#D16103"))+
+  facet_grid(~LENGTH)+
+  ggtitle("First fixation duration on the verb")+
+  ylab("First fixation duration (ms)")+
+  xlab("Presentation order (from 1-40)")+
+  labs(colour = "Condition")
+plot5
+```
